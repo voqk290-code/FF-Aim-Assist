@@ -6,7 +6,7 @@ import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import moe.shizuku.Shizuku
+import rikka.shizuku.Shizuku
 
 class MainActivity : AppCompatActivity() {
 
