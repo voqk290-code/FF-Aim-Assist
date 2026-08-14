@@ -9,8 +9,8 @@ import android.os.Looper
 import android.view.InputDevice
 import android.view.MotionEvent
 import android.util.Log
-import moe.shizuku.Shizuku
-import moe.shizuku.ShizukuManager
+import rikka.shizuku.Shizuku
+import rikka.shizuku.ShizukuManager
 import java.lang.reflect.Method
 
 class AimService : Service() {
