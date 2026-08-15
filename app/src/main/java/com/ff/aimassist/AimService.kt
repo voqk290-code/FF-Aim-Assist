@@ -21,18 +21,24 @@ class AimService : Service() {
 
     // Hàm inject sự kiện chạm
     private fun injectTouch(x: Float, y: Float, action: Int) {
-        try {
-            // Lấy InputManager thông qua Shizuku (dùng tên service là "input")
-           val inputManager = Shizuku.getSystemService("input", "android")
-            if (injectMethod == null) {
-                // Lấy phương thức injectInputEvent từ InputManager
-                injectMethod = inputManager.javaClass.getMethod(
-                    "injectInputEvent",
-                    MotionEvent::class.java,
-                    Int::class.javaPrimitiveType
-                )
-                injectMethod?.isAccessible = true
-            }
+    try {
+        val inputManager = Shizuku.getSystemService("input", "android") ?: run {
+            Log.e("AimService", "InputManager is null")
+            return
+        }
+        if (injectMethod == null) {
+            injectMethod = inputManager.javaClass.getMethod(
+                "injectInputEvent",
+                MotionEvent::class.java,
+                Int::class.javaPrimitiveType
+            )
+            injectMethod?.isAccessible = true
+        }
+        // ... phần còn lại giữ nguyên
+    } catch (e: Exception) {
+        Log.e("AimService", "Inject error: ${e.message}")
+    }
+    } 
             // Tạo MotionEvent
             val event = MotionEvent.obtain(
                 System.currentTimeMillis(), System.currentTimeMillis(),
