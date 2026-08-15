@@ -19,35 +19,33 @@ class AimService : Service() {
     private val handler = Handler(Looper.getMainLooper())
     private var injectMethod: Method? = null
 
-    // Hàm inject sự kiện chạm
     private fun injectTouch(x: Float, y: Float, action: Int) {
-    try {
-        // Lấy InputManager qua Shizuku, truyền đúng tham số
-        val inputManager = Shizuku.getSystemService("input", "android") ?: run {
-            Log.e("AimService", "InputManager is null")
-            return
-        }
-        if (injectMethod == null) {
-            injectMethod = inputManager.javaClass.getMethod(
-                "injectInputEvent",
-                MotionEvent::class.java,
-                Int::class.javaPrimitiveType
+        try {
+            // Sửa đúng tham số
+            val inputManager = Shizuku.getSystemService("input", "android") ?: run {
+                Log.e("AimService", "InputManager is null")
+                return
+            }
+            if (injectMethod == null) {
+                injectMethod = inputManager.javaClass.getMethod(
+                    "injectInputEvent",
+                    MotionEvent::class.java,
+                    Int::class.javaPrimitiveType
+                )
+                injectMethod?.isAccessible = true
+            }
+            val event = MotionEvent.obtain(
+                System.currentTimeMillis(), System.currentTimeMillis(),
+                action, x, y, 0f, 0f, 0, 0f, 0f,
+                InputDevice.SOURCE_TOUCHSCREEN, 0
             )
-            injectMethod?.isAccessible = true
+            injectMethod?.invoke(inputManager, event, 0)
+            event.recycle()
+        } catch (e: Exception) {
+            Log.e("AimService", "Inject error: ${e.message}")
         }
-        val event = MotionEvent.obtain(
-            System.currentTimeMillis(), System.currentTimeMillis(),
-            action, x, y, 0f, 0f, 0, 0f, 0f,
-            InputDevice.SOURCE_TOUCHSCREEN, 0
-        )
-        injectMethod?.invoke(inputManager, event, 0)
-        event.recycle()
-    } catch (e: Exception) {
-        Log.e("AimService", "Inject error: ${e.message}")
-    }
     }
 
-    // Runnable giả lập chạm tự động
     private val injectRunnable = object : Runnable {
         override fun run() {
             if (!running) return
@@ -94,8 +92,6 @@ class AimService : Service() {
             context.stopService(Intent(context, AimService::class.java))
         }
 
-        fun updateSensitivity(newSens: Int) {
-            // TODO: cập nhật sensitivity cho service nếu cần
-        }
+        fun updateSensitivity(newSens: Int) {}
     }
 }
