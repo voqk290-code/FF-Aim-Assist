@@ -97,6 +97,8 @@ class AimService : Service() {
             context.stopService(Intent(context, AimService::class.java))
         }
 
-        fun updateSensitivity(newSens: Int) {}
+        fun updateSensitivity(newSens: Int) {
+            // TODO: cập nhật sensitivity cho service nếu cần
+        }
     }
 }
