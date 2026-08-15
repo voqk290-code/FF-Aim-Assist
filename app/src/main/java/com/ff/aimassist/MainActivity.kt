@@ -81,16 +81,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestShizukuPermission() {
-    if (Shizuku.isPreV11() || Shizuku.getVersion() < 11) {
-        Toast.makeText(this, "Shizuku version không hỗ trợ", Toast.LENGTH_LONG).show()
-        return
+        if (Shizuku.isPreV11() || Shizuku.getVersion() < 11) {
+            Toast.makeText(this, "Shizuku version không hỗ trợ", Toast.LENGTH_LONG).show()
+            return
+        }
+        if (!Shizuku.hasPermission()) {
+            Shizuku.requestPermission(0)
+        } else {
+            Toast.makeText(this, "Đã có quyền Shizuku", Toast.LENGTH_SHORT).show()
+        }
     }
-   if (Shizuku.hasPermission()) { ... }   // ✅ Đúng
-        Shizuku.requestPermission(0)
-    } else {
-        Toast.makeText(this, "Đã có quyền Shizuku", Toast.LENGTH_SHORT).show()
-    }
-}
 
     private fun startAimService() {
         if (isServiceRunning) return
