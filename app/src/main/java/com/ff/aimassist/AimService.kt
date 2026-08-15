@@ -10,7 +10,6 @@ import android.view.InputDevice
 import android.view.MotionEvent
 import android.util.Log
 import rikka.shizuku.Shizuku
-import rikka.shizuku.ShizukuBinderWrapper
 import java.lang.reflect.Method
 
 class AimService : Service() {
@@ -20,10 +19,13 @@ class AimService : Service() {
     private val handler = Handler(Looper.getMainLooper())
     private var injectMethod: Method? = null
 
+    // Hàm inject sự kiện chạm
     private fun injectTouch(x: Float, y: Float, action: Int) {
         try {
+            // Lấy InputManager thông qua Shizuku (dùng tên service là "input")
+            val inputManager = Shizuku.getSystemService("input")
             if (injectMethod == null) {
-                val inputManager = Shizuku.getSystemService(Context.INPUT_SERVICE)
+                // Lấy phương thức injectInputEvent từ InputManager
                 injectMethod = inputManager.javaClass.getMethod(
                     "injectInputEvent",
                     MotionEvent::class.java,
@@ -31,22 +33,21 @@ class AimService : Service() {
                 )
                 injectMethod?.isAccessible = true
             }
+            // Tạo MotionEvent
             val event = MotionEvent.obtain(
                 System.currentTimeMillis(), System.currentTimeMillis(),
                 action, x, y, 0f, 0f, 0, 0f, 0f,
                 InputDevice.SOURCE_TOUCHSCREEN, 0
             )
-            injectMethod?.invoke(
-                Shizuku.getSystemService(Context.INPUT_SERVICE),
-                event,
-                0
-            )
+            // Gọi inject
+            injectMethod?.invoke(inputManager, event, 0)
             event.recycle()
         } catch (e: Exception) {
             Log.e("AimService", "Inject error: ${e.message}")
         }
     }
 
+    // Runnable giả lập chạm tự động (để test, sau này sẽ kết hợp Accessibility)
     private val injectRunnable = object : Runnable {
         override fun run() {
             if (!running) return
