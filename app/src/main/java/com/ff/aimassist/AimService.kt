@@ -23,7 +23,7 @@ class AimService : Service() {
     private fun injectTouch(x: Float, y: Float, action: Int) {
         try {
             // Lấy InputManager thông qua Shizuku (dùng tên service là "input")
-            val inputManager = Shizuku.getSystemService("input")
+           val inputManager = Shizuku.getSystemService("input", "android")
             if (injectMethod == null) {
                 // Lấy phương thức injectInputEvent từ InputManager
                 injectMethod = inputManager.javaClass.getMethod(
