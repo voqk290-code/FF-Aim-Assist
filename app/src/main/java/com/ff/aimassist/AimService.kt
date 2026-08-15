@@ -21,33 +21,30 @@ class AimService : Service() {
 
     // Hàm inject sự kiện chạm
     private fun injectTouch(x: Float, y: Float, action: Int) {
-        try {
-            // Lấy InputManager thông qua Shizuku (truyền thêm packageName)
-            val inputManager = Shizuku.getSystemService("input", "android")
-                Log.e("AimService", "InputManager is null")
-                return
-            }
-            if (injectMethod == null) {
-                // Lấy phương thức injectInputEvent từ InputManager
-                injectMethod = inputManager.javaClass.getMethod(
-                    "injectInputEvent",
-                    MotionEvent::class.java,
-                    Int::class.javaPrimitiveType
-                )
-                injectMethod?.isAccessible = true
-            }
-            // Tạo MotionEvent
-            val event = MotionEvent.obtain(
-                System.currentTimeMillis(), System.currentTimeMillis(),
-                action, x, y, 0f, 0f, 0, 0f, 0f,
-                InputDevice.SOURCE_TOUCHSCREEN, 0
-            )
-            // Gọi inject
-            injectMethod?.invoke(inputManager, event, 0)
-            event.recycle()
-        } catch (e: Exception) {
-            Log.e("AimService", "Inject error: ${e.message}")
+    try {
+        // Lấy InputManager qua Shizuku, truyền đúng tham số
+        val inputManager = Shizuku.getSystemService("input", "android") ?: run {
+            Log.e("AimService", "InputManager is null")
+            return
         }
+        if (injectMethod == null) {
+            injectMethod = inputManager.javaClass.getMethod(
+                "injectInputEvent",
+                MotionEvent::class.java,
+                Int::class.javaPrimitiveType
+            )
+            injectMethod?.isAccessible = true
+        }
+        val event = MotionEvent.obtain(
+            System.currentTimeMillis(), System.currentTimeMillis(),
+            action, x, y, 0f, 0f, 0, 0f, 0f,
+            InputDevice.SOURCE_TOUCHSCREEN, 0
+        )
+        injectMethod?.invoke(inputManager, event, 0)
+        event.recycle()
+    } catch (e: Exception) {
+        Log.e("AimService", "Inject error: ${e.message}")
+    }
     }
 
     // Runnable giả lập chạm tự động
