@@ -87,6 +87,8 @@ class MainActivity : AppCompatActivity() {
         }
         if (!Shizuku.hasPermission()) {
             Shizuku.requestPermission(0)
+        } else {
+            Toast.makeText(this, "Đã có quyền Shizuku", Toast.LENGTH_SHORT).show()
         }
     }
 
