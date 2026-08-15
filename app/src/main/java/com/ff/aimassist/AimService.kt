@@ -22,7 +22,7 @@ class AimService : Service() {
     private fun injectTouch(x: Float, y: Float, action: Int) {
         try {
             // Sửa đúng tham số
-           val inputManager = Shizuku.getSystemService("input", "android")
+          val inputManager = Shizuku.getSystemService("input", null)
                 Log.e("AimService", "InputManager is null")
                 return
             }
