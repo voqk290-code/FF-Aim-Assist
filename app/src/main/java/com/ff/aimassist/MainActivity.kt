@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Shizuku version không hỗ trợ", Toast.LENGTH_LONG).show()
             return
         }
-        if (!Shizuku.hasPermission()) {
+        if (Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED) { ... }
             Shizuku.requestPermission(0)
         } else {
             Toast.makeText(this, "Đã có quyền Shizuku", Toast.LENGTH_SHORT).show()
