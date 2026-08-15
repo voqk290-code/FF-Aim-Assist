@@ -10,7 +10,7 @@ import android.view.InputDevice
 import android.view.MotionEvent
 import android.util.Log
 import rikka.shizuku.Shizuku
-import rikka.shizuku.ShizukuManager
+import rikka.shizuku.ShizukuBinderWrapper
 import java.lang.reflect.Method
 
 class AimService : Service() {
@@ -63,10 +63,6 @@ class AimService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        if (!ShizukuManager.hasPermission()) {
-            stopSelf()
-            return
-        }
         running = true
         handler.post(injectRunnable)
     }
