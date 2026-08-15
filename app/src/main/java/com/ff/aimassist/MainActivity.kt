@@ -38,13 +38,13 @@ class MainActivity : AppCompatActivity() {
             if (!isShizukuReady) {
                 requestShizukuPermission()
             } else {
-                Toast.makeText(this, "Shizuku da ket noi", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Shizuku đã kết nối", Toast.LENGTH_SHORT).show()
             }
         }
 
         btnStart.setOnClickListener {
             if (!isShizukuReady) {
-                Toast.makeText(this, "Chua ket noi Shizuku", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Chưa kết nối Shizuku", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             startAimService()
@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         seekSensitivity.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 sensitivity = progress
-                tvSensitivity.text = "Do nhay: $progress%"
+                tvSensitivity.text = "Độ nhạy: $progress%"
                 if (isServiceRunning) {
                     AimService.updateSensitivity(progress)
                     AimAccessibilityService.updateSensitivity(progress)
@@ -71,18 +71,18 @@ class MainActivity : AppCompatActivity() {
     private fun checkShizuku() {
         if (Shizuku.pingBinder()) {
             isShizukuReady = true
-            tvStatus.text = "Trang thai: Shizuku da ket noi"
+            tvStatus.text = "Trạng thái: Shizuku đã kết nối"
             btnConnect.isEnabled = false
         } else {
             isShizukuReady = false
-            tvStatus.text = "Trang thai: Chua ket noi Shizuku"
+            tvStatus.text = "Trạng thái: Chưa kết nối Shizuku"
             btnConnect.isEnabled = true
         }
     }
 
     private fun requestShizukuPermission() {
         if (Shizuku.isPreV11() || Shizuku.getVersion() < 11) {
-            Toast.makeText(this, "Shizuku version khong ho tro", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Shizuku version không hỗ trợ", Toast.LENGTH_LONG).show()
             return
         }
         if (!Shizuku.hasPermission()) {
@@ -97,8 +97,8 @@ class MainActivity : AppCompatActivity() {
         isServiceRunning = true
         btnStart.isEnabled = false
         btnStop.isEnabled = true
-        tvStatus.text = "Trang thai: Dang chay (do nhay $sensitivity%)"
-        Toast.makeText(this, "Da bat dau ho tro aim", Toast.LENGTH_SHORT).show()
+        tvStatus.text = "Trạng thái: Đang chạy (độ nhạy $sensitivity%)"
+        Toast.makeText(this, "Đã bắt đầu hỗ trợ aim", Toast.LENGTH_SHORT).show()
     }
 
     private fun stopAimService() {
@@ -108,26 +108,12 @@ class MainActivity : AppCompatActivity() {
         isServiceRunning = false
         btnStart.isEnabled = true
         btnStop.isEnabled = false
-        tvStatus.text = "Trang thai: Da dung"
-        Toast.makeText(this, "Da dung ho tro aim", Toast.LENGTH_SHORT).show()
+        tvStatus.text = "Trạng thái: Đã dừng"
+        Toast.makeText(this, "Đã dừng hỗ trợ aim", Toast.LENGTH_SHORT).show()
     }
 
     override fun onResume() {
         super.onResume()
         checkShizuku()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 0) {
-            if (Shizuku.hasPermission()) {
-                isShizukuReady = true
-                tvStatus.text = "Trang thai: Shizuku da ket noi"
-                btnConnect.isEnabled = false
-                Toast.makeText(this, "Da nhan quyen Shizuku", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Tu choi quyen Shizuku", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 }
