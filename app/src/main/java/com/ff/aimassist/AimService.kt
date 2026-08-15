@@ -21,11 +21,9 @@ class AimService : Service() {
 
     private fun injectTouch(x: Float, y: Float, action: Int) {
         try {
-            // Sửa đúng tham số
-          val inputManager = Shizuku.getSystemService("input", null)
-                Log.e("AimService", "InputManager is null")
-                return
-            }
+            // Lấy InputManager qua Shizuku, truyền đúng tham số
+            val inputManager = Shizuku.getSystemService("input", "android")
+                ?: throw RuntimeException("InputManager is null")
             if (injectMethod == null) {
                 injectMethod = inputManager.javaClass.getMethod(
                     "injectInputEvent",
@@ -42,7 +40,7 @@ class AimService : Service() {
             injectMethod?.invoke(inputManager, event, 0)
             event.recycle()
         } catch (e: Exception) {
-            Log.e("AimService", "Inject error: ${e.message}")
+            Log.e("AimService", "Inject error: ${e.message}", e)
         }
     }
 
@@ -92,6 +90,8 @@ class AimService : Service() {
             context.stopService(Intent(context, AimService::class.java))
         }
 
-        fun updateSensitivity(newSens: Int) {}
+        fun updateSensitivity(newSens: Int) {
+            // TODO: cập nhật sensitivity cho service nếu cần
+        }
     }
 }
